@@ -1,6 +1,5 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 const BudgetContext = createContext();
 
@@ -10,56 +9,171 @@ export function useBudget() {
 }
 
 export const BudgetProvider = ({ children }) => {
-  // Main data points stored in localStorage
-  const [monthlyEarnings, setMonthlyEarnings] = useLocalStorage(
-    "monthlyEarnings",
-    0
-  );
-  const [monthlyExpenses, setMonthlyExpenses] = useLocalStorage(
-    "monthlyExpenses",
-    []
-  ); // { id, item, price, payableTo, period }
-  const [extraSpends, setExtraSpends] = useLocalStorage("extraSpends", []); // { id, item, price, date }
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  function addMonthlyExpense({ item, price, payableTo, period }) {
-    setMonthlyExpenses((prev) => {
-      return [
-        ...prev,
-        {
-          id: uuidV4(),
-          item,
-          price: parseFloat(price),
-          payableTo,
-          period,
-          dateModified: new Date().toISOString(),
-        },
-      ];
+  // Main data points stored in Cloudflare D1
+  const [monthlyEarnings, setMonthlyEarningsState] = useState(0);
+  const [monthlyExpenses, setMonthlyExpensesState] = useState([]);
+  const [extraSpends, setExtraSpendsState] = useState([]);
+
+  // Fetch initial data from our Cloudflare Pages Functions APIs
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [earningsRes, expensesRes, spendsRes] = await Promise.all([
+          fetch("/api/earnings"),
+          fetch("/api/monthly-expenses"),
+          fetch("/api/extra-spends"),
+        ]);
+
+        if (earningsRes.status === 401 || expensesRes.status === 401) {
+          setIsLoggedIn(false);
+          setCheckingAuth(false);
+          return;
+        }
+
+        setIsLoggedIn(true);
+
+        if (earningsRes.ok) {
+          const data = await earningsRes.json();
+          setMonthlyEarningsState(data.amount || 0);
+        }
+        if (expensesRes.ok) {
+          const data = await expensesRes.json();
+          setMonthlyExpensesState(data || []);
+        }
+        if (spendsRes.ok) {
+          const data = await spendsRes.json();
+          setExtraSpendsState(data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data from database:", error);
+      } finally {
+        setCheckingAuth(false);
+      }
+    }
+    fetchData();
+  }, [isLoggedIn]); // Refetch if isLoggedIn changes to true
+
+  const handleResponse = (res) => {
+    if (res.status === 401) setIsLoggedIn(false);
+    return res;
+  };
+
+  async function login(username, password) {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Login failed");
+    setIsLoggedIn(true);
   }
 
-  function addExtraSpend({ item, price }) {
-    setExtraSpends((prev) => {
-      return [
-        ...prev,
-        {
-          id: uuidV4(),
-          item,
-          price: parseFloat(price),
-          date: new Date().toISOString(),
-        },
-      ];
+  async function register(username, password) {
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Registration failed");
   }
 
-  function deleteMonthlyExpense(id) {
-    setMonthlyExpenses((prev) => prev.filter((exp) => exp.id !== id));
+  async function logout() {
+    await fetch("/api/logout", { method: "POST" });
+    setIsLoggedIn(false);
+    setMonthlyEarningsState(0);
+    setMonthlyExpensesState([]);
+    setExtraSpendsState([]);
   }
 
-  function deleteExtraSpend(id) {
-    setExtraSpends((prev) => prev.filter((exp) => exp.id !== id));
+  async function setMonthlyEarnings(amount) {
+    setMonthlyEarningsState(amount);
+    try {
+      const res = await fetch("/api/earnings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+      });
+      handleResponse(res);
+    } catch (e) {
+      console.error("Error setting monthly earnings", e);
+    }
+  }
+
+  async function addMonthlyExpense({ item, price, payableTo, period }) {
+    const newExpense = {
+      id: uuidV4(),
+      item,
+      price: parseFloat(price),
+      payableTo,
+      period,
+      dateModified: new Date().toISOString(),
+    };
+    
+    setMonthlyExpensesState((prev) => [...prev, newExpense]);
+    try {
+      const res = await fetch("/api/monthly-expenses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newExpense),
+      });
+      handleResponse(res);
+    } catch (e) {
+      console.error("Error adding monthly expense", e);
+    }
+  }
+
+  async function addExtraSpend({ item, price }) {
+    const newSpend = {
+      id: uuidV4(),
+      item,
+      price: parseFloat(price),
+      date: new Date().toISOString(),
+    };
+    
+    setExtraSpendsState((prev) => [...prev, newSpend]);
+    try {
+      const res = await fetch("/api/extra-spends", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSpend),
+      });
+      handleResponse(res);
+    } catch (e) {
+      console.error("Error adding extra spend", e);
+    }
+  }
+
+  async function deleteMonthlyExpense(id) {
+    setMonthlyExpensesState((prev) => prev.filter((exp) => exp.id !== id));
+    try {
+      const res = await fetch(`/api/monthly-expenses/${id}`, { method: "DELETE" });
+      handleResponse(res);
+    } catch (e) {
+      console.error("Error deleting monthly expense", e);
+    }
+  }
+
+  async function deleteExtraSpend(id) {
+    setExtraSpendsState((prev) => prev.filter((exp) => exp.id !== id));
+    try {
+      const res = await fetch(`/api/extra-spends/${id}`, { method: "DELETE" });
+      handleResponse(res);
+    } catch (e) {
+      console.error("Error deleting extra spend", e);
+    }
   }
 
   const value = {
+    isLoggedIn,
+    checkingAuth,
+    login,
+    register,
+    logout,
     monthlyEarnings,
     setMonthlyEarnings,
     monthlyExpenses,
@@ -74,3 +188,4 @@ export const BudgetProvider = ({ children }) => {
     <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>
   );
 };
+
