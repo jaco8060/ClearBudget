@@ -1,10 +1,10 @@
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
 import React, { useState } from "react";
 import SettingDialog from "./SettingDialog";
 import { useBudget } from "../context/BudgetContext";
+import LogoIcon from "./LogoIcon";
 
 export default function Header() {
   const [openSettings, setOpenSettings] = useState(false);
@@ -14,7 +14,7 @@ export default function Header() {
     <>
       <AppBar position="static">
         <Toolbar>
-          <AccountBalanceWalletIcon sx={{ mr: 2 }} />
+          <LogoIcon sx={{ mr: 2, color: '#10b981' }} fontSize="large" />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             ClearBudget
           </Typography>
