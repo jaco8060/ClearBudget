@@ -2,6 +2,8 @@
 
 A robust, cloud-synced personal finance application built with React, Vite, Material UI, and powered seamlessly by Cloudflare's serverless edge ecosystem. 
 
+**Try it Live:** [https://jeremiah-budget-app.pages.dev/](https://jeremiah-budget-app.pages.dev/)
+
 This application abandoned traditional `localStorage` constraints in favor of a globally persistent Cloudflare D1 SQL Database, allowing users to safely log in and sync their financial data seamlessly across their desktop and mobile devices.
 
 ## ✨ Features
