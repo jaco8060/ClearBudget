@@ -13,18 +13,82 @@ import { BudgetProvider, useBudget } from "./context/BudgetContext";
 const proTheme = createTheme({
   palette: {
     mode: "dark",
-    primary: teal,
-    secondary: amber,
-    background: {
-      default: "#121212",
-      paper: "#1e1e1e",
+    primary: {
+      main: "#10b981", // Emerald
+      light: "#34d399",
+      dark: "#059669"
     },
+    secondary: {
+      main: "#6366f1", // Indigo
+      light: "#818cf8",
+      dark: "#4f46e5"
+    },
+    background: {
+      default: "#0f172a", // Deep slate
+      paper: "#1e293b",   // Lighter slate surface
+    },
+    success: { main: "#10b981" },
+    warning: { main: "#f59e0b" },
+    error: { main: "#ef4444" },
+    info: { main: "#3b82f6" },
+  },
+  shape: {
+    borderRadius: 16, // Modern rounded corners
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
-    h5: {
-      fontWeight: 700,
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    h1: { fontFamily: "'Outfit', sans-serif", fontWeight: 700 },
+    h2: { fontFamily: "'Outfit', sans-serif", fontWeight: 700 },
+    h3: { fontFamily: "'Outfit', sans-serif", fontWeight: 600 },
+    h4: { fontFamily: "'Outfit', sans-serif", fontWeight: 600 },
+    h5: { fontFamily: "'Outfit', sans-serif", fontWeight: 600 },
+    h6: { fontFamily: "'Outfit', sans-serif", fontWeight: 600 },
+    button: { textTransform: "none", fontWeight: 600 }, // Remove all-caps buttons
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none", // Remove default MUI surface white-overlay
+          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", 
+          border: "1px solid rgba(255, 255, 255, 0.05)" // Subtle glass rim
+        },
+      },
     },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgba(15, 23, 42, 0.7)", // Transparent glassmorphism for nav
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+          boxShadow: "none",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12, // Pill-like elegant buttons
+          padding: "8px 24px",
+        },
+        contained: {
+          boxShadow: "none",
+          "&:hover": {
+            boxShadow: "0 4px 20px rgba(16, 185, 129, 0.25)", // Subtle neon hover glow
+          }
+        }
+      },
+    },
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          boxShadow: "0 8px 20px rgba(99, 102, 241, 0.4)",
+          "&:hover": {
+            boxShadow: "0 12px 28px rgba(99, 102, 241, 0.6)", 
+          }
+        }
+      }
+    }
   },
 });
 
