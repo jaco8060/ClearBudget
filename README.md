@@ -1,4 +1,4 @@
-# Modern Budget Tracker 💸
+# ClearBudget 💸
 
 A robust, cloud-synced personal finance application built with React, Vite, Material UI, and powered seamlessly by Cloudflare's serverless edge ecosystem. 
 

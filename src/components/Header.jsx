@@ -16,7 +16,7 @@ export default function Header() {
         <Toolbar>
           <AccountBalanceWalletIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Budget Tracker
+            ClearBudget
           </Typography>
           <IconButton color="inherit" onClick={() => setOpenSettings(true)} sx={{ mr: 1 }}>
             <SettingsIcon />
