@@ -68,7 +68,7 @@ export default function SummaryDashboard() {
 
       {/* 📊 NEW CHART GOES HERE */}
       <Grid container spacing={3}>
-        <Grid item xs={12} md={5}>
+        <Grid item xs={12} md={5} sx={{ width: { xs: '100%', md: 'auto' } }}>
           <SpendingChart
             weeklyExpenses={weeklyExpenses}
             weeklySavings={weeklySavings}
