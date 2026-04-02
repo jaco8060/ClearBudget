@@ -1,5 +1,6 @@
-name = "budget-app"
+name = "clearbudget"
 compatibility_date = "2024-03-29"
+pages_build_output_dir = "clearbudget"
 
 [[d1_databases]]
 binding = "DB"
