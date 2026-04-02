@@ -1,7 +1,7 @@
 import { Grid, Box } from "@mui/material";
 import React from "react";
 import { useBudget } from "../context/BudgetContext";
-import { isDateInCurrentWeek } from "../utils/dateUtils";
+import { isDateInCurrentWeek, getDaysLeftInCurrentWeek } from "../utils/dateUtils";
 import { formatCurrency } from "../utils/formatters";
 import StatCard from "./StatCard";
 import SpendingChart from "./SpendingChart";
@@ -33,7 +33,7 @@ export default function SummaryDashboard() {
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={7}>
           <StatCard
-            title="Available to Spend This Week"
+            title={`Available to Spend This Week (${getDaysLeftInCurrentWeek()} days left)`}
             value={formatCurrency(availableToSpend)}
             icon={<AccountBalanceWalletIcon />}
             color={availableColor}

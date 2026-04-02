@@ -15,3 +15,16 @@ export function isDateInCurrentWeek(dateString) {
 
   return date >= startOfWeek && date <= endOfWeek;
 }
+
+export function getDaysLeftInCurrentWeek() {
+  const today = new Date();
+  return 6 - today.getDay();
+}
+
+export function getStartOfWeek(dateString) {
+  const date = new Date(dateString);
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - date.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  return startOfWeek;
+}

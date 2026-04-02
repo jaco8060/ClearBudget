@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Login from "./components/Login";
 import SummaryDashboard from "./components/SummaryDashboard";
 import WeeklySpendsList from "./components/WeeklySpendsList";
+import WeeklyHistory from "./components/WeeklyHistory";
 import { BudgetProvider, useBudget } from "./context/BudgetContext";
 
 const proTheme = createTheme({
@@ -123,6 +124,7 @@ function AuthWrapper({ setOpenAddSpend, openAddSpend }) {
       <Container component="main" sx={{ py: 4, flexGrow: 1 }}>
         <SummaryDashboard />
         <WeeklySpendsList />
+        <WeeklyHistory />
       </Container>
       <Fab
         color="secondary"
