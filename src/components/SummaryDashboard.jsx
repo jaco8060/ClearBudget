@@ -14,13 +14,22 @@ export default function SummaryDashboard() {
   const { monthlyEarnings, monthlyExpenses, extraSpends } = useBudget();
 
   // --- Calculations ---
-  const totalMonthlyExpenses = monthlyExpenses.reduce(
+  const actualExpenses = monthlyExpenses.filter(e => e.period !== "savings");
+  const savings = monthlyExpenses.filter(e => e.period === "savings");
+
+  const totalMonthlyExpenses = actualExpenses.reduce(
     (total, exp) => total + exp.price,
     0
   );
+  const totalMonthlySavings = savings.reduce(
+    (total, exp) => total + exp.price,
+    0
+  );
+
   const weeklyEarnings = monthlyEarnings / 4;
   const weeklyExpenses = totalMonthlyExpenses / 4;
-  const weeklyAllowance = weeklyEarnings - weeklyExpenses;
+  const weeklySavings = totalMonthlySavings / 4;
+  const weeklyAllowance = weeklyEarnings - weeklyExpenses - weeklySavings;
   const totalExtraSpendsThisWeek = extraSpends
     .filter((spend) => isDateInCurrentWeek(spend.date))
     .reduce((total, spend) => total + spend.price, 0);
@@ -67,6 +76,7 @@ export default function SummaryDashboard() {
         <Grid item xs={12} md={5}>
           <SpendingChart 
             weeklyExpenses={weeklyExpenses} 
+            weeklySavings={weeklySavings}
             extraSpendsThisWeek={totalExtraSpendsThisWeek} 
             remaining={availableToSpend} 
           />

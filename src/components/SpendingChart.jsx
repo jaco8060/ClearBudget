@@ -2,13 +2,14 @@ import React from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-export default function SpendingChart({ weeklyExpenses, extraSpendsThisWeek, remaining }) {
+export default function SpendingChart({ weeklyExpenses, weeklySavings, extraSpendsThisWeek, remaining }) {
   const theme = useTheme();
 
   // Create data points for our chart based on weekly numbers
   const data = [
     { name: 'Recurring Expenses', value: Math.max(0, weeklyExpenses) },
     { name: 'Extra Spends', value: Math.max(0, extraSpendsThisWeek) },
+    { name: 'Savings Target', value: Math.max(0, weeklySavings) },
   ];
 
   // Only show remaining if it's positive
@@ -20,6 +21,7 @@ export default function SpendingChart({ weeklyExpenses, extraSpendsThisWeek, rem
   const COLORS = [
     theme.palette.warning.main, // Orange/Yellow for expenses
     theme.palette.error.main,   // Red for extra spends
+    theme.palette.info.main,    // Blue for savings target
     theme.palette.success.main  // Green for remaining money
   ];
 
@@ -30,13 +32,13 @@ export default function SpendingChart({ weeklyExpenses, extraSpendsThisWeek, rem
       </Typography>
       
       {/* Recharts responsive wrapper */}
-      <Box sx={{ width: '100%', height: 320, mt: 2 }}>
+      <Box sx={{ width: '100%', height: 350, mt: 2 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+          <PieChart margin={{ top: 20, right: 0, bottom: 30, left: 0 }}>
             <Pie
               data={data}
               cx="50%"
-              cy="45%"
+              cy="50%"
               innerRadius={60}
               outerRadius={90}
               paddingAngle={5}

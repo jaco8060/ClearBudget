@@ -32,6 +32,11 @@ export default function SettingDialog({ open, handleClose }) {
   const earningsRef = useRef();
   const expenseItemRef = useRef();
   const expensePriceRef = useRef();
+  const savingsItemRef = useRef();
+  const savingsPriceRef = useRef();
+
+  const actualExpenses = monthlyExpenses.filter(e => e.period !== "savings");
+  const savingsGoals = monthlyExpenses.filter(e => e.period === "savings");
 
   function handleSaveSettings() {
     const newEarnings = parseFloat(earningsRef.current.value);
@@ -53,6 +58,20 @@ export default function SettingDialog({ open, handleClose }) {
       // Clear the form fields after submission
       expenseItemRef.current.value = "";
       expensePriceRef.current.value = "";
+    }
+  }
+
+  function handleAddSavings(e) {
+    e.preventDefault();
+    if (savingsItemRef.current.value && savingsPriceRef.current.value) {
+      addMonthlyExpense({
+        item: savingsItemRef.current.value,
+        price: savingsPriceRef.current.value,
+        payableTo: "",
+        period: "savings",
+      });
+      savingsItemRef.current.value = "";
+      savingsPriceRef.current.value = "";
     }
   }
 
@@ -89,7 +108,7 @@ export default function SettingDialog({ open, handleClose }) {
           Add fixed monthly costs like rent, utilities, or subscriptions.
         </Typography>
         <List>
-          {monthlyExpenses.map((exp) => (
+          {actualExpenses.map((exp) => (
             <ListItem key={exp.id} disablePadding>
               <ListItemText
                 primary={exp.item}
@@ -129,7 +148,68 @@ export default function SettingDialog({ open, handleClose }) {
               inputRef={expensePriceRef}
               required
               inputProps={{ step: "0.01" }}
-              sx={{ width: { xs: "100%", sm: 150 } }}
+              sx={{ width: { xs: "100%", sm: 180 } }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: { xs: "100%", sm: "auto" } }}
+            >
+              Add
+            </Button>
+          </Stack>
+        </Box>
+
+        <Divider sx={{ my: 4 }} />
+
+        {/* Section 3: Monthly Savings */}
+        <Typography variant="h6" component="h3">
+          Monthly Savings Goals
+        </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          Set aside money for savings securely.
+        </Typography>
+        <List>
+          {savingsGoals.map((exp) => (
+            <ListItem key={exp.id} disablePadding>
+              <ListItemText
+                primary={exp.item}
+                secondary={formatCurrency(exp.price)}
+              />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => deleteMonthlyExpense(exp.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+
+        <Box component="form" onSubmit={handleAddSavings} sx={{ mt: 2 }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems="center"
+          >
+            <TextField
+              label="Savings Target"
+              variant="outlined"
+              inputRef={savingsItemRef}
+              required
+              fullWidth
+            />
+            <TextField
+              label="Amount"
+              type="number"
+              variant="outlined"
+              inputRef={savingsPriceRef}
+              required
+              inputProps={{ step: "0.01" }}
+              sx={{ width: { xs: "100%", sm: 185 } }}
             />
             <Button
               type="submit"
