@@ -121,7 +121,7 @@ function AuthWrapper({ setOpenAddSpend, openAddSpend }) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
-      <Container component="main" sx={{ py: 4, flexGrow: 1 }}>
+      <Container component="main" sx={{ py: 4, flexGrow: 1, px: { xs: 1.5, sm: 3 } }}>
         <SummaryDashboard />
         <WeeklySpendsList />
         <WeeklyHistory />

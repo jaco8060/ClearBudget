@@ -39,8 +39,8 @@ export default function SummaryDashboard() {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={7}>
+      <Grid container spacing={3} sx={{ mb: 3 }} columns={12}>
+        <Grid item xs={12} md={7} sx={{ width: { xs: '100%', md: 'auto' } }}>
           <StatCard
             title={`Available to Spend This Week (${getDaysLeftInCurrentWeek()} days left)`}
             value={formatCurrency(availableToSpend)}
@@ -48,37 +48,32 @@ export default function SummaryDashboard() {
             color={availableColor}
           />
         </Grid>
-
-        <Grid item xs={12} md={5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <StatCard
-                title="Weekly Earnings"
-                value={formatCurrency(weeklyEarnings)}
-                icon={<TrendingUpIcon />}
-                color="primary.main"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <StatCard
-                title="Weekly Recurring"
-                value={formatCurrency(weeklyExpenses)}
-                icon={<TrendingDownIcon />}
-                color="warning.main"
-              />
-            </Grid>
-          </Grid>
+        <Grid item xs={12} md={2.5} sx={{ width: { xs: '100%', md: 'auto' } }}>
+          <StatCard
+            title="Weekly Earnings"
+            value={formatCurrency(weeklyEarnings)}
+            icon={<TrendingUpIcon />}
+            color="primary.main"
+          />
+        </Grid>
+        <Grid item xs={12} md={2.5} sx={{ width: { xs: '100%', md: 'auto' } }}>
+          <StatCard
+            title="Weekly Recurring"
+            value={formatCurrency(weeklyExpenses)}
+            icon={<TrendingDownIcon />}
+            color="warning.main"
+          />
         </Grid>
       </Grid>
-      
+
       {/* 📊 NEW CHART GOES HERE */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={5}>
-          <SpendingChart 
-            weeklyExpenses={weeklyExpenses} 
+          <SpendingChart
+            weeklyExpenses={weeklyExpenses}
             weeklySavings={weeklySavings}
-            extraSpendsThisWeek={totalExtraSpendsThisWeek} 
-            remaining={availableToSpend} 
+            extraSpendsThisWeek={totalExtraSpendsThisWeek}
+            remaining={availableToSpend}
           />
         </Grid>
       </Grid>
