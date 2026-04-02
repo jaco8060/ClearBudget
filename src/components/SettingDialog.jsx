@@ -1,4 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
@@ -16,17 +17,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useBudget } from "../context/BudgetContext";
 import { formatCurrency } from "../utils/formatters";
 
 export default function SettingDialog({ open, handleClose }) {
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
   const {
     monthlyEarnings,
     setMonthlyEarnings,
     monthlyExpenses,
     addMonthlyExpense,
     deleteMonthlyExpense,
+    logout,
   } = useBudget();
 
   const earningsRef = useRef();
@@ -77,7 +81,12 @@ export default function SettingDialog({ open, handleClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>Budget Settings</DialogTitle>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pr: 1 }}>
+        Budget Settings
+        <IconButton onClick={handleClose} size="small" aria-label="close" sx={{ color: 'text.secondary' }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         {/* Section 1: Monthly Earnings */}
         <Typography variant="h6" component="h3" sx={{ mt: 1 }}>
@@ -221,12 +230,32 @@ export default function SettingDialog({ open, handleClose }) {
           </Stack>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ p: "16px 24px" }}>
-        <Button onClick={handleClose}>Cancel</Button>
+      <DialogActions sx={{ p: "16px 24px", justifyContent: "space-between" }}>
+        <Button onClick={() => setLogoutConfirmOpen(true)} color="error">
+          Logout
+        </Button>
         <Button onClick={handleSaveSettings} variant="contained">
-          Save & Close
+          Save &amp; Close
         </Button>
       </DialogActions>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={logoutConfirmOpen} onClose={() => setLogoutConfirmOpen(false)}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to log out?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLogoutConfirmOpen(false)}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => { setLogoutConfirmOpen(false); handleClose(); logout(); }}
+          >
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 }
